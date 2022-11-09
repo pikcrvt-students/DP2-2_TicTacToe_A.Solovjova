@@ -5,20 +5,21 @@
 
 using namespace std;
 
-#define compareBoxes(box1, box2, box3) ((board[box1] == board[box2]) && (board[box2] == board[box3]) && (board[box1] != 0))
-#define numberToLetter(x) ((x > 0) ? (x == 1) ? 'X' : 'O' : ' ')
+#define compareBoxes(box1, box2, box3) ((board[box1] == board[box2]) && (board[box2] == board[box3]) && (board[box1] != 0)) //Pārbauda, vai trīs vienumi ir vienādi, un pārliecinās, ka tie nav 0.
+#define numberToLetter(x) ((x > 0) ? (x == 1) ? 'X' : 'O' : ' ') //Paņem ciparu un pārvērš to par burtu vai atstarpi.
 
 int getWinner(int board[9]) {
+	//Atrod spēles uzvarētāju, ja uzvarētāja nav, atgriež 0.
 	int winner = 0;
 	for (int x = 0; x < 3; x++) {
-		if (compareBoxes(3*x, 3*x+1, 3*x+2)) {
+		if (compareBoxes(3*x, 3*x+1, 3*x+2)) { //Pārbauda rindas.
 			winner = board[3*x];
 			break;
-		} else if (compareBoxes(x, x+3, x+6)) { 
+		} else if (compareBoxes(x, x+3, x+6)) { //Pārbauda kolonnas.
 			winner = board[x];
 			break;
 
-		} else if (compareBoxes(2*x, 4, 8-2*x) && (x < 2)) { 
+		} else if (compareBoxes(2*x, 4, 8-2*x) && (x < 2)) { //Pārbauda diagonāles. Nepārbauda, ​​vai x == 2.
 			winner = board[4];
 			break;
 		}
@@ -26,6 +27,7 @@ int getWinner(int board[9]) {
 	return winner;
 }
 bool gameOver(int board[9]){
+	//Pārbauda, vai spēle ir beigusies, un paziņo, kurš uzvarēja, vai neizšķirts.
 	int winner = getWinner(board);
 	if (winner > 0) {
 		cout << numberToLetter(winner) << " wins!"<< endl;
@@ -39,9 +41,10 @@ bool gameOver(int board[9]){
 }
 
 int willWin(int board[9], int player) {
+	//Pārbauda, vai konkrētais spēlētājs varētu uzvarēt nākamajā plankā.
 	for (int x = 0; x < 9; x++) {
 		int tempBoard[9];
-		memcpy(tempBoard, board, 36);
+		memcpy(tempBoard, board, 36); //memcy - Kopē baitu skaita vērtības no avota norādītās vietas tieši uz atmiņas bloku, uz kuru norāda galamērķis.
 		if (board[x] > 0) continue;
 		tempBoard[x] = player;
 		if(getWinner(tempBoard) == player) return x;
@@ -50,7 +53,8 @@ int willWin(int board[9], int player) {
 }
 
 int exceptionalCase(int board[9]) {
-	int cases[2][9] = {{1,0,0,0,2,0,0,0,1}, {0,1,0,1,2,0,0,0,0}}; 
+	//Atrod apmales, kas ir algoritma darbības izņēmumi.
+	int cases[2][9] = {{1,0,0,0,2,0,0,0,1}, {0,1,0,1,2,0,0,0,0}}; //Dēļi, kas nedarbojas ar algoritmu.
 	int answers[2][4] = {{3,3,3,3}, {2,8,6,0}};
 	int rotatedBoard[9] = {6,3,0,7,4,1,8,5,2};
 	int newBoard[9];
@@ -64,6 +68,7 @@ int exceptionalCase(int board[9]) {
 				tempBoard[x] = newBoard[x];
 			
 			int match = 0;
+			//Pagriež dēli, lai tas darbotos ar dažādām vienas un tās pašas plates versijām.
 			for (int box = 0; box < 9; box++) {
 				newBoard[box] = tempBoard[rotatedBoard[box]];
 			}
@@ -79,6 +84,7 @@ int exceptionalCase(int board[9]) {
 }
 
 int getSpace(int board[9], int spaces[4]) {
+	//Iegūst nejaušu stūri vai malu, kas nav aizņemta.
 	bool isSpaceEmpty = false;
 	int y;
 	for (int x = 0; x < 4; x++) {
@@ -106,7 +112,7 @@ void outputBoard(int board[9]) {
 }
 
 int main(){
-	int board[9] = {0,0,0,0,0,0,0,0,0};
+	int board[9] = {0,0,0,0,0,0,0,0,0}; //Sāk tukšu dēli.
 	int possibleWinner;
 	int move;
 	bool isInvalid;
@@ -118,6 +124,7 @@ int main(){
 	cout << "1|2|3\n-----\n4|5|6\n-----\n7|8|9\n\n";
 
 	while (true) {
+		//Spēlētājs X izlemj, kādu kustību viņš veiks.
 		do {
 			cout << "X: ";
 			getline(cin, moveString);
@@ -132,11 +139,13 @@ int main(){
 			}
 		} while (isInvalid);
 
+		//Izlemj, vai spēle turpināsies vai ne.
 		if (gameOver(board) > 0) {
 			outputBoard(board);
 			break;
 		}
 
+		//Spēlētājs O izlemj, kuru gājienu viņš veiks.
 		bool good = false;
 		for (int x = 2; x > 0; x--){
 			possibleWinner = willWin(board, x);
@@ -147,10 +156,10 @@ int main(){
 			}
 		}
 		if (good);
-		else if (board[4] == 0) board[4] = 2; 
-		else if (exceptionalCase(board) > -1) board[exceptionalCase(board)] = 2; 
-		else if (getSpace(board, corners) != -1) board[getSpace(board, corners)] = 2; 
-		else board[getSpace(board, sides)] = 2; 
+		else if (board[4] == 0) board[4] = 2; //Vidus.
+		else if (exceptionalCase(board) > -1) board[exceptionalCase(board)] = 2; //Izņēmuma dēļi.
+		else if (getSpace(board, corners) != -1) board[getSpace(board, corners)] = 2; //Stūri
+		else board[getSpace(board, sides)] = 2; //puses
 
 		outputBoard(board);
 
