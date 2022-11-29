@@ -53,8 +53,7 @@ int willWin(int board[9], int player) {
 }
 
 int exceptionalCase(int board[9]) {
-	//Atrod apmales, kas ir algoritma darbības izņēmumi.
-	int cases[2][9] = {{1,0,0,0,2,0,0,0,1}, {0,1,0,1,2,0,0,0,0}}; //Dēļi, kas nedarbojas ar algoritmu.
+	int cases[2][9] = {{1,0,0,0,2,0,0,0,1}, {0,1,0,1,2,0,0,0,0}}; 
 	int answers[2][4] = {{3,3,3,3}, {2,8,6,0}};
 	int rotatedBoard[9] = {6,3,0,7,4,1,8,5,2};
 	int newBoard[9];
@@ -68,7 +67,6 @@ int exceptionalCase(int board[9]) {
 				tempBoard[x] = newBoard[x];
 			
 			int match = 0;
-			//Pagriež dēli, lai tas darbotos ar dažādām vienas un tās pašas plates versijām.
 			for (int box = 0; box < 9; box++) {
 				newBoard[box] = tempBoard[rotatedBoard[box]];
 			}
