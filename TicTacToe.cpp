@@ -19,7 +19,7 @@ int getWinner(int board[9]) {
 			winner = board[x];
 			break;
 
-		} else if (compareBoxes(2*x, 4, 8-2*x) && (x < 2)) { //Pārbauda diagonāles. Nepārbauda, ​​vai x == 2.
+		} else if (compareBoxes(2*x, 4, 8-2*x) && (x < 2)) { //Pārbauda diagonāles. 
 			winner = board[4];
 			break;
 		}
